@@ -3,7 +3,8 @@
     package="com.example.sayem.remindme" >
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,16 +18,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ItemEditorActivity"
-            android:theme="@android:style/Theme.Holo.Light.Dialog">
+        <activity
+            android:name=".ItemEditorActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog" >
         </activity>
-        <activity android:name=".LoginActivity"
+        <activity
+            android:name=".LoginActivity"
             android:label="Sign In"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         </activity>
-        <activity android:name=".CategoryList"
+        <activity
+            android:name=".CategoryList"
             android:label="Category"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
+        </activity>
+        <activity android:name=".UserLocationActivity"
+            android:theme="@android:style/Theme.NoDisplay">
         </activity>
     </application>
 

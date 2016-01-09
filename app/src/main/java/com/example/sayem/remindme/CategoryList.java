@@ -3,6 +3,7 @@ package com.example.sayem.remindme;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -38,6 +39,20 @@ public class CategoryList extends Activity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.alarm:
+                Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.aboutUs:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onBackPressed() {
