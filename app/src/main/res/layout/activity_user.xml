@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#5B8DDD"
+    tools:context=".UserActivity"
+    android:id="@+id/relative_layout">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_linear_layout">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/iconView"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/icon_view"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_gravity="center"
+            android:text="Remind Me"
+            android:textColor="#ffffff"
+            android:id="@+id/appNameTextView"
+            android:focusable="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guest User"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:textColor="#ffffff"
+            android:layout_marginTop="35dp"
+            android:id="@+id/guestUserButton"
+            android:background="@drawable/guest_user_button_custom"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/registeredUserButton"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:textColor="#ffffff"
+            android:text="Registered User"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:background="@drawable/registered_user_button_custom" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>
