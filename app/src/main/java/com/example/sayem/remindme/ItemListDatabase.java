@@ -287,31 +287,31 @@ public class ItemListDatabase extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         int database = 0;
         if (group_position.equals("Pharmacy")){
-            database = db.delete(ItemListDatabase.PHARMACY, null, null);
+            database = db.delete(PHARMACY, null, null);
             db.close();
         }
         else if (group_position.equals("Super Shop")){
-            database = db.delete(ItemListDatabase.SUPER_SHOP, null, null);
+            database = db.delete(SUPER_SHOP, null, null);
             db.close();
         }
         else if (group_position.equals("Stationery Shop")){
-            database = db.delete(ItemListDatabase.STATIONERY_SHOP, null, null);
+            database = db.delete(STATIONERY_SHOP, null, null);
             db.close();
         }
         else if (group_position.equals("Market")){
-            database = db.delete(ItemListDatabase.MARKET, null, null);
+            database = db.delete(MARKET, null, null);
             db.close();
         }
         else if (group_position.equals("Hotel")){
-            database = db.delete(ItemListDatabase.HOTEL, null, null);
+            database = db.delete(HOTEL, null, null);
             db.close();
         }
         else if (group_position.equals("Hardware Shop")){
-            database = db.delete(ItemListDatabase.HARDWARE_SHOP, null, null);
+            database = db.delete(HARDWARE_SHOP, null, null);
             db.close();
         }
         else if (group_position.equals("Computer Accessories Shop")){
-            database = db.delete(ItemListDatabase.COMPUTER_ACCESSORIES_SHOP, null, null);
+            database = db.delete(COMPUTER_ACCESSORIES_SHOP, null, null);
             db.close();
         }
         return database;
@@ -322,35 +322,45 @@ public class ItemListDatabase extends SQLiteOpenHelper{
         SQLiteDatabase db = this.getWritableDatabase();
         int database = 0;
         if (group_position.equals("Pharmacy")){
-            database = db.delete(ItemListDatabase.PHARMACY, PHARMACY_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(PHARMACY, PHARMACY_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         else if (group_position.equals("Super Shop")){
-            database = db.delete(ItemListDatabase.SUPER_SHOP, SUPER_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(SUPER_SHOP, SUPER_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         else if (group_position.equals("Stationery Shop")){
-            database = db.delete(ItemListDatabase.STATIONERY_SHOP, STATIONERY_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(STATIONERY_SHOP, STATIONERY_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         else if (group_position.equals("Market")){
-            database = db.delete(ItemListDatabase.MARKET, MARKET_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(MARKET, MARKET_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         else if (group_position.equals("Hotel")){
-            database = db.delete(ItemListDatabase.HOTEL, HOTEL_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(HOTEL, HOTEL_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         else if (group_position.equals("Hardware Shop")){
-            database = db.delete(ItemListDatabase.HARDWARE_SHOP, HARDWARE_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(HARDWARE_SHOP, HARDWARE_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         else if (group_position.equals("Computer Accessories Shop")){
-            database = db.delete(ItemListDatabase.COMPUTER_ACCESSORIES_SHOP, COMPUTER_ACCESSORIES_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
+            database = db.delete(COMPUTER_ACCESSORIES_SHOP, COMPUTER_ACCESSORIES_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
         return database;
     }
 
-
+    public void deleteAll(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(PHARMACY, null, null);
+        db.delete(SUPER_SHOP, null, null);
+        db.delete(STATIONERY_SHOP, null, null);
+        db.delete(MARKET, null, null);
+        db.delete(HOTEL, null, null);
+        db.delete(HARDWARE_SHOP, null, null);
+        db.delete(COMPUTER_ACCESSORIES_SHOP, null, null);
+        db.close();
+    }
 }

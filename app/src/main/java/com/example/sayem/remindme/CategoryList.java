@@ -1,7 +1,9 @@
 package com.example.sayem.remindme;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,9 +42,36 @@ public class CategoryList extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
 
         switch (item.getItemId()) {
+            case R.id.reset:
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CategoryList.this);
+                alertDialog.setTitle("Attention!!");
+                alertDialog.setMessage("Are you sure want to delete?");
+                alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
+                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
+                        itemListDatabase.deleteAll();
+                        categoryListAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
+                        onRestart();
+                    }
+                });
+                alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+                return true;
+
             case R.id.alarm:
                 Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
                 startActivity(intent);

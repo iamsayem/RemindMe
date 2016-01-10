@@ -33,7 +33,7 @@
             android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         </activity>
         <activity android:name=".UserLocationActivity"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
         </activity>
     </application>
 

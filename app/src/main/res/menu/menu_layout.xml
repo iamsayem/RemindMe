@@ -15,6 +15,11 @@
         android:icon="@drawable/ic_action_threedots"
         >
         <item
+            android:title="Reset"
+            android:id="@+id/reset"
+            />
+
+        <item
             android:title="Alarm"
             android:id="@+id/alarm"
             />
