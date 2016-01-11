@@ -6,13 +6,19 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionBarStyle">@style/MyActionButtonOverflow</item>
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
+        <item name="android:alertDialogTheme">@android:style/Theme.Black</item>
     </style>
 
     <!-- Style to replace actionbar overflow icon. set item 'android:actionOverflowButtonStyle' in AppTheme -->
     <style name="MyActionButtonOverflow" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:src">@drawable/ic_action_threedots</item>
         <item name="android:background">?android:attr/actionBarItemBackground</item>
-        <item name="android:contentDescription">"Lala"</item>
+    </style>
+
+    <style name="MyPopupMenu" parent="android:Widget.Holo">
+        <item name="android:background">?android:attr/actionBarItemBackground</item>
     </style>
 
 

@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v7.internal.view.menu.MenuBuilder;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,10 +18,14 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,55 +39,6 @@ public class CategoryList extends Activity {
     static HashMap<String, List<String> > listDataChild;
     static int group_size, child_size;
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_layout, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.reset:
-                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CategoryList.this);
-                alertDialog.setTitle("Attention!!");
-                alertDialog.setMessage("Are you sure want to delete?");
-                alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
-                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
-                        itemListDatabase.deleteAll();
-                        categoryListAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
-                        onRestart();
-                    }
-                });
-                alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.cancel();
-                    }
-                });
-                alertDialog.create();
-                alertDialog.show();
-                return true;
-
-            case R.id.alarm:
-                Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-                startActivity(intent);
-                return true;
-            case R.id.aboutUs:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -116,7 +73,7 @@ public class CategoryList extends Activity {
         categoryListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (categoryListAdapter.getChildrenCount(groupPosition) == 0){
+                if (categoryListAdapter.getChildrenCount(groupPosition) == 0) {
                     Toast.makeText(getApplicationContext(), "Empty!!!", Toast.LENGTH_SHORT).show();
                 }
                 return false;
@@ -150,19 +107,74 @@ public class CategoryList extends Activity {
     }
 
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_layout, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.reset:
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CategoryList.this);
+                alertDialog.setTitle("Attention!!");
+                alertDialog.setMessage("Are you sure want to delete?");
+                alertDialog.setIcon(R.drawable.ic_error_black_24dp);
+                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
+                        itemListDatabase.deleteAll();
+                        categoryListAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
+                        onRestart();
+                    }
+                });
+                alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.create();
+                alertDialog.show();
+                return true;
+
+            case R.id.alarm:
+                Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.aboutUs:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.categoryListView){
             ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+            int type = ExpandableListView.getPackedPositionType(info.packedPosition);
             int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
             int childPos = ExpandableListView.getPackedPositionChild(info.packedPosition);
             //menu.setHeaderTitle(listDataHeader.get(groupPos));
-            menu.setHeaderTitle("Are you sure want to delete " + "\"" + listDataChild.get(listDataHeader.get(groupPos)).get(childPos)+ "\"?");
-            menu.setHeaderIcon(android.R.drawable.ic_dialog_alert);
-            //menu.add(Menu.NONE, 0, Menu.NONE, "Edit");
-            menu.add(Menu.NONE, 1, Menu.NONE, "Delete").setIcon(android.R.drawable.ic_menu_delete);
-
+            if (type == ExpandableListView.PACKED_POSITION_TYPE_CHILD){
+                menu.setHeaderTitle("Are you sure want to delete " + "\"" + listDataChild.get(listDataHeader.get(groupPos)).get(childPos)+ "\"?");
+                menu.setHeaderIcon(R.drawable.ic_error_black_24dp);
+                menu.add(Menu.NONE, 1, Menu.NONE, "Yes");
+                menu.add(Menu.NONE, 2, Menu.NONE, "No");
+            }
         }
     }
 
@@ -189,8 +201,10 @@ public class CategoryList extends Activity {
                 //itemListDatabase.deleteTable(groupName);
                 itemListDatabase.deleteRow(groupName, itemName);
                 categoryListAdapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "Delete Successfull!!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
                 onRestart();
+                return true;
+            case 2:
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -207,9 +221,11 @@ public class CategoryList extends Activity {
     }
 
     private void showPickMenu(View anchor, final int groupPosition) {
+
+
         PopupMenu popupMenu = new PopupMenu(getApplicationContext(), anchor);
         popupMenu.inflate(R.menu.category_item_menu);
-
+        setForceShowIcon(popupMenu);
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -234,7 +250,7 @@ public class CategoryList extends Activity {
                         ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
                         itemListDatabase.deleteTable(groupName);
                         categoryListAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), "Delete Successfull!!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
                         onRestart();
                         break;
                 }
@@ -242,6 +258,25 @@ public class CategoryList extends Activity {
             }
         });
         popupMenu.show();
+    }
+
+
+    public static void setForceShowIcon(PopupMenu popupMenu){
+        try {
+            Field[] fields = popupMenu.getClass().getDeclaredFields();
+            for (Field field : fields){
+                if ("mPopup".equals(field.getName())){
+                    field.setAccessible(true);
+                    Object menuPopupHelper = field.get(popupMenu);
+                    Class<?> classPopHelper = Class.forName(menuPopupHelper.getClass().getName());
+                    Method setForceIcons = classPopHelper.getMethod("setForceShowIcon", boolean.class);
+                    setForceIcons.invoke(menuPopupHelper, true);
+                    break;
+                }
+            }
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
     }
 
     private  void prepareListData(){
@@ -460,6 +495,7 @@ public class CategoryList extends Activity {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //showPickMenu(v, groupPosition);
                     showPickMenu(v, groupPosition);
                 }
             });

@@ -7,18 +7,26 @@
     >
 
     <item
-        android:title="menus"
+        android:title="menu"
         android:id="@+id/menus"
         app:showAsAction="always"
+        android:icon="@drawable/ic_action_threedots"
         >
-        <item
-            android:title="Edit"
-            android:id="@+id/editMenu"
-            />
-        <item
-            android:title="Delete"
-            android:id="@+id/deleteMenu"
-            />
+        <group>
+            <item
+                android:title="Edit"
+                android:id="@+id/editMenu"
+                app:showAsAction="ifRoom|withText"
+                android:icon="@android:drawable/ic_menu_edit"
+                />
+            <item
+                android:title="Delete"
+                android:id="@+id/deleteMenu"
+                app:showAsAction="ifRoom|withText"
+                android:icon="@android:drawable/ic_menu_delete"
+                />
+        </group>
+
 
     </item>
 
