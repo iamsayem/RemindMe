@@ -1,9 +1,9 @@
 package com.example.sayem.remindme;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
-public class AlarmActivity extends AppCompatActivity {
+public class AlarmActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
