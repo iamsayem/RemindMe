@@ -36,7 +36,8 @@
             android:name=".UserLocationActivity"
             android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         </activity>
-        <activity android:name=".AlarmActivity" >
+        <activity android:name=".AlarmActivity"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         </activity>
     </application>
 

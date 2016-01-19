@@ -142,7 +142,7 @@ public class CategoryList extends Activity {
                 return true;
 
             case R.id.alarm:
-                Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AlarmActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.aboutUs:
@@ -430,7 +430,7 @@ public class CategoryList extends Activity {
         private List<String> _listDataHeader; // Header titles
         private HashMap<String, List<String> > _listDataChild; // Child Items
 
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(_context.LAYOUT_INFLATER_SERVICE);
 
         public CategoryListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> listDataChild) {
             this._context = context;
