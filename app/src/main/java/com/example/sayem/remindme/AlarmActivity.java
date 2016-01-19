@@ -3,29 +3,19 @@ package com.example.sayem.remindme;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.ExpandableListView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.sql.Time;
-import java.text.DateFormat;
-import java.util.ArrayList;
+
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+
 
 public class AlarmActivity extends Activity {
 
@@ -47,6 +37,16 @@ public class AlarmActivity extends Activity {
     String toDate;
     String fromTime;
     String toTime;
+    int to_dayOfMonth;
+    int to_monthOfYear;
+    int to_year;
+    int from_dayOfMonth;
+    int from_monthOfYear;
+    int from_year;
+    int to_hourOfDay;
+    int to_minute;
+    int from_hourOfDay;
+    int from_minute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class AlarmActivity extends Activity {
         toTimeButton = (Button) findViewById(R.id.toTimeButton);
         setAlarmToneTextView = (TextView) findViewById(R.id.setAlarmToneTextView);
 
-        setAlarmToneTextView.setText("Set the alarm");
+        setTheAlarmTextView.setText("Non-Schedule based alarm");
         scheduleBasedAlarmTextView.setText("Schedule based alarm");
         fromTextView.setText("From");
         toTextView.setText("To");
@@ -106,84 +106,125 @@ public class AlarmActivity extends Activity {
         fromDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar dateCalendar = Calendar.getInstance();
-                dateCalendar.get(Calendar.YEAR);
-                dateCalendar.get(Calendar.MONTH);
-                dateCalendar.get(Calendar.DAY_OF_MONTH);
+
                 datePickerDialog = new DatePickerDialog(AlarmActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                        fromDate = dayOfMonth + "/" + monthOfYear + "/" + year;
+                        Calendar fromDateCalendar = Calendar.getInstance();
+                        fromDateCalendar.set(Calendar.YEAR, year);
+                        fromDateCalendar.set(Calendar.MONTH, monthOfYear);
+                        fromDateCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+                        from_dayOfMonth = fromDateCalendar.get(Calendar.DAY_OF_MONTH);
+                        from_monthOfYear = fromDateCalendar.get(Calendar.MONTH);
+                        from_year = fromDateCalendar.get(Calendar.YEAR);
+
+                        fromDate = from_dayOfMonth + "/" + (from_monthOfYear+1) + "/" + from_year;
+                        fromDateButton.setText(fromDate);
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
                 datePickerDialog.show();
             }
         });
-        fromDateButton.setText(fromDate);
+        //fromDateButton.setText(fromDate);
 
         toDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Calendar dateCalendar = Calendar.getInstance();
-                dateCalendar.get(Calendar.YEAR);
-                dateCalendar.get(Calendar.MONTH);
-                dateCalendar.get(Calendar.DAY_OF_MONTH);
-
                 datePickerDialog = new DatePickerDialog(AlarmActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                        toDate = dayOfMonth + "/" + monthOfYear + "/" + year;
+                        Calendar toDateCalendar = Calendar.getInstance();
+                        toDateCalendar.set(Calendar.YEAR, year);
+                        toDateCalendar.set(Calendar.MONTH, monthOfYear);
+                        toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        to_dayOfMonth = toDateCalendar.get(Calendar.DAY_OF_MONTH);
+                        to_monthOfYear = toDateCalendar.get(Calendar.MONTH);
+                        to_year = toDateCalendar.get(Calendar.YEAR);
+
+                        toDate = to_dayOfMonth + "/" + (to_monthOfYear+1) + "/" + to_year;
+                        toDateButton.setText(toDate);
+
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
                 datePickerDialog.show();
             }
         });
-        toDateButton.setText(toDate);
 
         fromTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Calendar timeCalendar = Calendar.getInstance();
-                timeCalendar.get(Calendar.HOUR_OF_DAY);
-                timeCalendar.get(Calendar.MINUTE);
+
                 timePickerDialog = new TimePickerDialog(AlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-                        fromTime = hourOfDay + ":" + minute;
+                        Calendar fromTimeCalendar = Calendar.getInstance();
+                        fromTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        fromTimeCalendar.set(Calendar.MINUTE, minute);
+
+                        from_hourOfDay = fromTimeCalendar.get(Calendar.HOUR_OF_DAY);
+                        from_minute = fromTimeCalendar.get(Calendar.MINUTE);
+
+                        String am_pm = new String();
+                        if (fromTimeCalendar.get(Calendar.AM_PM) == Calendar.PM){
+                            am_pm = "PM";
+                        }
+                        else if (fromTimeCalendar.get(Calendar.AM_PM) == Calendar.AM){
+                            am_pm = "AM";
+                        }
+                        String hourString = (fromTimeCalendar.get(Calendar.HOUR) == 0)?"12":fromTimeCalendar.get(Calendar.HOUR) + "";
+                        String minuteString = (from_minute < 10)?"0" + from_minute:from_minute + "";
+                        fromTime = hourString + ":" + minuteString + " " + am_pm;
+                        fromTimeButton.setText(fromTime);
+
                     }
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+                }, calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE), false);
 
                 timePickerDialog.show();
             }
         });
-        fromTimeButton.setText(fromTime);
 
         toTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Calendar timeCalendar = Calendar.getInstance();
-                timeCalendar.get(Calendar.HOUR_OF_DAY);
-                timeCalendar.get(Calendar.MINUTE);
                 timePickerDialog = new TimePickerDialog(AlarmActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-                        toTime = hourOfDay + ":" + minute;
+                        Calendar toTimeCalendar = Calendar.getInstance();
+                        toTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                        toTimeCalendar.set(Calendar.MINUTE, minute);
+                        
+                        to_hourOfDay = toTimeCalendar.get(Calendar.HOUR_OF_DAY);
+                        to_minute = toTimeCalendar.get(Calendar.MINUTE);
+
+                        String am_pm = new String();
+                        if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.PM){
+                            am_pm = "PM";
+                        }
+                        else if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.AM){
+                            am_pm = "AM";
+                        }
+                        String hourString = (toTimeCalendar.get(Calendar.HOUR) == 0)?"12":toTimeCalendar.get(Calendar.HOUR) + "";
+                        String minuteString = (to_minute < 10)?"0" + to_minute:to_minute + "";
+                        toTime = hourString + ":" + minuteString + " " + am_pm;
+                        toTimeButton.setText(toTime);
+
                     }
-                },calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false);
+                }, calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE), false);
 
                 timePickerDialog.show();
             }
         });
-        toTimeButton.setText(toTime);
 
     }
 
