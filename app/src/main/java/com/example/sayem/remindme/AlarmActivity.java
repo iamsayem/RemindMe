@@ -120,6 +120,14 @@ public class AlarmActivity extends Activity {
                         from_monthOfYear = fromDateCalendar.get(Calendar.MONTH);
                         from_year = fromDateCalendar.get(Calendar.YEAR);
 
+                        FromDateClass fromDateClass = new FromDateClass(from_dayOfMonth, from_monthOfYear, from_year);
+                        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+                        if (fromToDateDatabase.readFromDateTable().length == 0){
+                            fromToDateDatabase.insertFromDateTable(fromDateClass);
+                        }else{
+                            fromToDateDatabase.updateFromDateTable(fromDateClass);
+                        }
+
                         fromDate = from_dayOfMonth + "/" + (from_monthOfYear+1) + "/" + from_year;
                         fromDateButton.setText(fromDate);
                     }
@@ -146,6 +154,14 @@ public class AlarmActivity extends Activity {
                         to_dayOfMonth = toDateCalendar.get(Calendar.DAY_OF_MONTH);
                         to_monthOfYear = toDateCalendar.get(Calendar.MONTH);
                         to_year = toDateCalendar.get(Calendar.YEAR);
+
+                        ToDateClass toDateClass = new ToDateClass(to_dayOfMonth, to_monthOfYear, to_year);
+                        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+                        if (fromToDateDatabase.readToDateTable().length == 0){
+                            fromToDateDatabase.insertToDateTable(toDateClass);
+                        }else{
+                            fromToDateDatabase.updateToDateTable(toDateClass);
+                        }
 
                         toDate = to_dayOfMonth + "/" + (to_monthOfYear+1) + "/" + to_year;
                         toDateButton.setText(toDate);
@@ -180,6 +196,19 @@ public class AlarmActivity extends Activity {
                         else if (fromTimeCalendar.get(Calendar.AM_PM) == Calendar.AM){
                             am_pm = "AM";
                         }
+
+                        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+                        FromTimeClass fromTimeClass = new FromTimeClass(from_hourOfDay, from_minute);
+                        TimeAmPmClass timeAmPmClass = new TimeAmPmClass(am_pm);
+
+                        if (fromToDateDatabase.readFromTimeTable().length == 0 && fromToDateDatabase.readFromTimeAmPmTable().length == 0){
+                            fromToDateDatabase.insertFromTimeTable(fromTimeClass);
+                            fromToDateDatabase.insertFromTimeAmPmTable(timeAmPmClass);
+                        }else{
+                            fromToDateDatabase.updateFromTimeTable(fromTimeClass);
+                            fromToDateDatabase.updateFromTimeAmPmTable(timeAmPmClass);
+                        }
+
                         String hourString = (fromTimeCalendar.get(Calendar.HOUR) == 0)?"12":fromTimeCalendar.get(Calendar.HOUR) + "";
                         String minuteString = (from_minute < 10)?"0" + from_minute:from_minute + "";
                         fromTime = hourString + ":" + minuteString + " " + am_pm;
@@ -214,6 +243,19 @@ public class AlarmActivity extends Activity {
                         else if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.AM){
                             am_pm = "AM";
                         }
+
+                        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+                        ToTimeClass toTimeClass = new ToTimeClass(to_hourOfDay, to_minute);
+                        TimeAmPmClass timeAmPmClass = new TimeAmPmClass(am_pm);
+
+                        if (fromToDateDatabase.readToTimeTable().length == 0 && fromToDateDatabase.readToTimeAmPmTable().length == 0){
+                            fromToDateDatabase.insertToTimeTable(toTimeClass);
+                            fromToDateDatabase.insertToTimeAmPmTable(timeAmPmClass);
+                        }else{
+                            fromToDateDatabase.updateToTimeTable(toTimeClass);
+                            fromToDateDatabase.updateToTimeAmPmTable(timeAmPmClass);
+                        }
+
                         String hourString = (toTimeCalendar.get(Calendar.HOUR) == 0)?"12":toTimeCalendar.get(Calendar.HOUR) + "";
                         String minuteString = (to_minute < 10)?"0" + to_minute:to_minute + "";
                         toTime = hourString + ":" + minuteString + " " + am_pm;
@@ -229,6 +271,11 @@ public class AlarmActivity extends Activity {
     }
 
     private void prepareData(){
+
+        prepareFromDate();
+        prepareFromTime();
+        prepareToDate();
+        prepareToTime();
 
         if (alarmOnOffSwitch.isChecked()){
 //                alarmOnOffTextView.setText("Alarm On");
@@ -254,6 +301,72 @@ public class AlarmActivity extends Activity {
     protected void onResume() {
         super.onResume();
         prepareData();
+    }
+
+    private void prepareFromDate(){
+        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+        int[][] dataFromDate = fromToDateDatabase.readFromDateTable();
+        int[] dataFromDateTemp = new int[3];
+        for (int i = 0; i < dataFromDate.length; i++){
+            for (int j = 0; j < dataFromDate[i].length; j++){
+                dataFromDateTemp[j] = dataFromDate[i][j];
+            }
+        }
+        fromDate = dataFromDateTemp[0] + "/" + dataFromDateTemp[1] + "/" + dataFromDateTemp[2] + "";
+        fromDateButton.setText(fromDate);
+    }
+
+    private void prepareFromTime(){
+        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+        int[][] dataFromTime = fromToDateDatabase.readFromTimeTable();
+        int[] dataFromTimeTemp = new int[2];
+        String[] dataFromTimeAmPm = fromToDateDatabase.readFromTimeAmPmTable();
+        for (int i = 0; i < dataFromTime.length; i++){
+            for (int j = 0; j < dataFromTime[i].length; j++){
+                dataFromTimeTemp[j] = dataFromTime[i][j];
+            }
+        }
+        for (int i = 0; i < dataFromTimeAmPm.length; i++){
+            // nothing
+        }
+
+        String hourString = (dataFromTimeTemp[0] == 0)?"12":dataFromTimeTemp[0] + "";
+        String minuteString = (dataFromTimeTemp[1] < 10)?"0" + dataFromTimeTemp[1]:dataFromTimeTemp[1] + "";
+        fromTime = hourString + ":" + minuteString + " " + dataFromTimeAmPm[0];
+        fromTimeButton.setText(fromTime);
+    }
+
+    private void prepareToDate(){
+        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+        int[][] dataToDate = fromToDateDatabase.readToDateTable();
+        int[] dataToDateTemp = new int[3];
+        for (int i = 0; i < dataToDate.length; i++){
+            for (int j = 0; j < dataToDate[i].length; j++){
+                dataToDateTemp[j] = dataToDate[i][j];
+            }
+        }
+        toDate = dataToDateTemp[0] + "/" + dataToDateTemp[1] + "/" + dataToDateTemp[2] + "";
+        toDateButton.setText(toDate);
+    }
+
+    private void prepareToTime(){
+        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+        int[][] dataToTime = fromToDateDatabase.readToTimeTable();
+        int[] dataToTimeTemp = new int[2];
+        String[] dataToTimeAmPm = fromToDateDatabase.readToTimeAmPmTable();
+        for (int i = 0; i < dataToTime.length; i++){
+            for (int j = 0; j < dataToTime[i].length; j++){
+                dataToTimeTemp[j] = dataToTime[i][j];
+            }
+        }
+        for (int i = 0; i < dataToTimeAmPm.length; i++){
+            // nothing
+        }
+
+        String hourString = (dataToTimeTemp[0] == 0)?"12":dataToTimeTemp[0] + "";
+        String minuteString = (dataToTimeTemp[1] < 10)?"0" + dataToTimeTemp[1]:dataToTimeTemp[1] + "";
+        toTime = hourString + ":" + minuteString + " " + dataToTimeAmPm[0];
+        toTimeButton.setText(toTime);
     }
 
 }

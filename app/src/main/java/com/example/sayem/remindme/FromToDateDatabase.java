@@ -43,6 +43,16 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
     private static final String TO_MONTH_OF_YEAR = "to_month_of_year";
     private static final String TO_YEAR = "to_year";
 
+    // FROM_TIME_AM_PM variable declaration
+    private static final String FROM_TIME_AM_PM_TABLE = "from_time_am_pm";
+
+    private static final String FROM_TIME_AM_PM = "from_am_pm";
+
+    // TO_TIME_AM_PM variable declaration
+    private static final String TO_TIME_AM_PM_TABLE = "to_time_am_pm";
+
+    private static final String TO_TIME_AM_PM = "to_am_pm";
+
 
     String CREATE_FROM_DATE_TABLE = "CREATE TABLE " + FROM_DATE_TABLE + "("
             + FROM_DAY_OF_MONTH + " INTEGER" + ","
@@ -66,6 +76,13 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             + TO_MINUTE + " INTEGER"
             + ");";
 
+    String CREATE_FROM_TIME_AM_PM_TABLE = "CREATE TABLE " + FROM_TIME_AM_PM_TABLE + "("
+            + FROM_TIME_AM_PM + " TEXT" +
+            ");";
+
+    String CREATE_TO_TIME_AM_PM_TABLE = "CREATE TABLE " + TO_TIME_AM_PM_TABLE + "("
+            + TO_TIME_AM_PM + " TEXT" +
+            ");";
 
     public FromToDateDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -78,6 +95,8 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
         db.execSQL(CREATE_FROM_TIME_TABLE);
         db.execSQL(CREATE_TO_DATE_TABLE);
         db.execSQL(CREATE_TO_TIME_TABLE);
+        db.execSQL(CREATE_FROM_TIME_AM_PM_TABLE);
+        db.execSQL(CREATE_TO_TIME_AM_PM_TABLE);
     }
 
     @Override
@@ -87,6 +106,8 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + FROM_TIME_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + TO_DATE_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + TO_TIME_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + FROM_TIME_AM_PM_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TO_TIME_AM_PM_TABLE);
 
         onCreate(db);
     }
@@ -141,10 +162,32 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
         return database;
     }
 
+    public long insertFromTimeAmPmTable(TimeAmPmClass timeAmPmClass){
+        long database = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(FROM_TIME_AM_PM, timeAmPmClass.getAm_pm());
+        database = db.insert(FROM_TIME_AM_PM_TABLE, null, contentValues);
+        db.close();
+        return database;
+    }
+
+    public long insertToTimeAmPmTable(TimeAmPmClass timeAmPmClass){
+        long database = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(TO_TIME_AM_PM, timeAmPmClass.getAm_pm());
+        database = db.insert(TO_TIME_AM_PM_TABLE, null, contentValues);
+        db.close();
+        return database;
+    }
+
     public int[][] readFromDateTable(){
         int[][] from_date_data = new int[][]{};
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + FROM_DATE_TABLE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + FROM_DATE_TABLE + ";", null);
         cursor.moveToFirst();
         from_date_data = new int[cursor.getCount()][3];
         if (cursor.moveToFirst()){
@@ -158,13 +201,14 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
                 i++;
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return from_date_data;
     }
 
     public int[][] readFromTimeTable(){
         int[][] from_time_data = new int[][]{};
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + FROM_TIME_TABLE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + FROM_TIME_TABLE + ";", null);
         cursor.moveToFirst();
         from_time_data = new int[cursor.getCount()][2];
         if (cursor.moveToFirst()){
@@ -178,13 +222,14 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
                 i++;
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return from_time_data;
     }
 
     public int[][] readToDateTable(){
         int[][] to_date_data = new int[][]{};
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TO_DATE_TABLE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TO_DATE_TABLE + ";", null);
         cursor.moveToFirst();
         to_date_data = new int[cursor.getCount()][3];
         if (cursor.moveToFirst()){
@@ -198,13 +243,14 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
                 i++;
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return to_date_data;
     }
 
     public int[][] readToTimeTable(){
         int[][] to_time_data = new int[][]{};
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + TO_TIME_TABLE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TO_TIME_TABLE + ";", null);
         cursor.moveToFirst();
         to_time_data = new int[cursor.getCount()][2];
         if (cursor.moveToFirst()){
@@ -218,7 +264,42 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
                 i++;
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return to_time_data;
+    }
+
+    public String[] readFromTimeAmPmTable(){
+        String[] am_pm = new String[]{};
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + FROM_TIME_AM_PM_TABLE + ";", null);
+        cursor.moveToFirst();
+        am_pm = new String[cursor.getCount()];
+        if (cursor.moveToFirst()){
+            int i = 0;
+            do {
+                am_pm[i] = cursor.getString(cursor.getColumnIndex(FROM_TIME_AM_PM));
+                i++;
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return am_pm;
+    }
+
+    public String[] readToTimeAmPmTable(){
+        String[] am_pm = new String[]{};
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TO_TIME_AM_PM_TABLE + ";", null);
+        cursor.moveToFirst();
+        am_pm = new String[cursor.getCount()];
+        if (cursor.moveToFirst()){
+            int i = 0;
+            do {
+                am_pm[i] = cursor.getString(cursor.getColumnIndex(TO_TIME_AM_PM));
+                i++;
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return am_pm;
     }
 
     public long updateFromDateTable(FromDateClass fromDateClass){
@@ -267,6 +348,28 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
         contentValues.put(TO_HOUR_OF_DAY, toTimeClass.getTo_hourOfDay());
         contentValues.put(TO_MINUTE, toTimeClass.getTo_minute());
         database = db.update(TO_TIME_TABLE, contentValues, null, null);
+        db.close();
+        return database;
+    }
+
+    public long updateFromTimeAmPmTable(TimeAmPmClass timeAmPmClass){
+        long database = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(FROM_TIME_AM_PM, timeAmPmClass.getAm_pm());
+        database = db.update(FROM_TIME_AM_PM_TABLE, contentValues, null, null);
+        db.close();
+        return database;
+    }
+
+    public long updateToTimeAmPmTable(TimeAmPmClass timeAmPmClass){
+        long database = 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(TO_TIME_AM_PM, timeAmPmClass.getAm_pm());
+        database = db.update(TO_TIME_AM_PM_TABLE, contentValues, null, null);
         db.close();
         return database;
     }
