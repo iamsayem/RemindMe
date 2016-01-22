@@ -202,6 +202,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             }while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return from_date_data;
     }
 
@@ -223,6 +224,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             }while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return from_time_data;
     }
 
@@ -244,6 +246,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             }while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return to_date_data;
     }
 
@@ -265,6 +268,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             }while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return to_time_data;
     }
 
@@ -282,6 +286,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return am_pm;
     }
 
@@ -299,6 +304,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             }while(cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return am_pm;
     }
 

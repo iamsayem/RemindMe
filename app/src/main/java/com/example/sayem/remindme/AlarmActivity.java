@@ -312,7 +312,7 @@ public class AlarmActivity extends Activity {
                 dataFromDateTemp[j] = dataFromDate[i][j];
             }
         }
-        fromDate = dataFromDateTemp[0] + "/" + dataFromDateTemp[1] + "/" + dataFromDateTemp[2] + "";
+        fromDate = dataFromDateTemp[0] + "/" + (dataFromDateTemp[1] + 1) + "/" + dataFromDateTemp[2] + "";
         fromDateButton.setText(fromDate);
     }
 
@@ -321,6 +321,7 @@ public class AlarmActivity extends Activity {
         int[][] dataFromTime = fromToDateDatabase.readFromTimeTable();
         int[] dataFromTimeTemp = new int[2];
         String[] dataFromTimeAmPm = fromToDateDatabase.readFromTimeAmPmTable();
+        String temp = new String();
         for (int i = 0; i < dataFromTime.length; i++){
             for (int j = 0; j < dataFromTime[i].length; j++){
                 dataFromTimeTemp[j] = dataFromTime[i][j];
@@ -328,11 +329,16 @@ public class AlarmActivity extends Activity {
         }
         for (int i = 0; i < dataFromTimeAmPm.length; i++){
             // nothing
+            temp = dataFromTimeAmPm[i];
+        }
+
+        if (temp.equals("PM")){
+            dataFromTimeTemp[0] -= 12;
         }
 
         String hourString = (dataFromTimeTemp[0] == 0)?"12":dataFromTimeTemp[0] + "";
         String minuteString = (dataFromTimeTemp[1] < 10)?"0" + dataFromTimeTemp[1]:dataFromTimeTemp[1] + "";
-        fromTime = hourString + ":" + minuteString + " " + dataFromTimeAmPm[0];
+        fromTime = hourString + ":" + minuteString + " " + temp;
         fromTimeButton.setText(fromTime);
     }
 
@@ -345,7 +351,7 @@ public class AlarmActivity extends Activity {
                 dataToDateTemp[j] = dataToDate[i][j];
             }
         }
-        toDate = dataToDateTemp[0] + "/" + dataToDateTemp[1] + "/" + dataToDateTemp[2] + "";
+        toDate = dataToDateTemp[0] + "/" + (dataToDateTemp[1] + 1) + "/" + dataToDateTemp[2] + "";
         toDateButton.setText(toDate);
     }
 
@@ -354,6 +360,7 @@ public class AlarmActivity extends Activity {
         int[][] dataToTime = fromToDateDatabase.readToTimeTable();
         int[] dataToTimeTemp = new int[2];
         String[] dataToTimeAmPm = fromToDateDatabase.readToTimeAmPmTable();
+        String temp = new String();
         for (int i = 0; i < dataToTime.length; i++){
             for (int j = 0; j < dataToTime[i].length; j++){
                 dataToTimeTemp[j] = dataToTime[i][j];
@@ -361,11 +368,16 @@ public class AlarmActivity extends Activity {
         }
         for (int i = 0; i < dataToTimeAmPm.length; i++){
             // nothing
+            temp = dataToTimeAmPm[i];
+        }
+
+        if (temp.equals("PM")){
+            dataToTimeTemp[0] -= 12;
         }
 
         String hourString = (dataToTimeTemp[0] == 0)?"12":dataToTimeTemp[0] + "";
         String minuteString = (dataToTimeTemp[1] < 10)?"0" + dataToTimeTemp[1]:dataToTimeTemp[1] + "";
-        toTime = hourString + ":" + minuteString + " " + dataToTimeAmPm[0];
+        toTime = hourString + ":" + minuteString + " " + temp + "";
         toTimeButton.setText(toTime);
     }
 
