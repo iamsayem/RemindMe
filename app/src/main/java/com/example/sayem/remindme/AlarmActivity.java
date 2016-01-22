@@ -55,6 +55,23 @@ public class AlarmActivity extends Activity {
         initializeAll();
     }
 
+    private void prepareData(){
+
+        prepareScheduleAlarmSwitchState();
+        prepareNonScheduleAlarmSwitchState();
+        prepareFromDate();
+        prepareFromTime();
+        prepareToDate();
+        prepareToTime();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        prepareData();
+    }
+
     private void initializeAll(){
 
         calendar = Calendar.getInstance();
@@ -77,6 +94,16 @@ public class AlarmActivity extends Activity {
         toTextView.setText("To");
         setAlarmToneTextView.setText("Set alarm tone");
 
+        initializeAlarmOnOffSwitch();
+        initializeScheduleOnOffSwitch();
+        initializeFromDateButton();
+        initializeFromTimeButton();
+        initializeToDateButton();
+        initializeToTimeButton();
+
+    }
+
+    private void initializeAlarmOnOffSwitch(){
 
         alarmOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -87,10 +114,10 @@ public class AlarmActivity extends Activity {
 
                 if (isChecked) {
                     alarmState = true;
-                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
-                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0){
+                    AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
+                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0) {
                         alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
-                    }else {
+                    } else {
                         alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
                     }
 
@@ -99,17 +126,21 @@ public class AlarmActivity extends Activity {
                 } else {
 
                     alarmState = false;
-                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
+                    AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
 
-                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0){
+                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0) {
                         alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
-                    }else {
+                    } else {
                         alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
 
                     }
                 }
             }
         });
+
+    }
+
+    private void initializeScheduleOnOffSwitch(){
 
         scheduleOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -121,21 +152,21 @@ public class AlarmActivity extends Activity {
                 if (isChecked) {
 
                     alarmState = true;
-                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
-                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0){
+                    AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
+                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0) {
                         alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
-                    }else {
+                    } else {
                         alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
                     }
 
                 } else {
 
                     alarmState = false;
-                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
+                    AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
 
-                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0){
+                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0) {
                         alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
-                    }else {
+                    } else {
                         alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
                     }
 
@@ -143,6 +174,11 @@ public class AlarmActivity extends Activity {
             }
         });
 
+    }
+
+    private void initializeFromDateButton(){
+
+        calendar = Calendar.getInstance();
         fromDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,43 +212,12 @@ public class AlarmActivity extends Activity {
                 datePickerDialog.show();
             }
         });
-        //fromDateButton.setText(fromDate);
 
-        toDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
 
-                datePickerDialog = new DatePickerDialog(AlarmActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+    private void initializeFromTimeButton(){
 
-                        Calendar toDateCalendar = Calendar.getInstance();
-                        toDateCalendar.set(Calendar.YEAR, year);
-                        toDateCalendar.set(Calendar.MONTH, monthOfYear);
-                        toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                        to_dayOfMonth = toDateCalendar.get(Calendar.DAY_OF_MONTH);
-                        to_monthOfYear = toDateCalendar.get(Calendar.MONTH);
-                        to_year = toDateCalendar.get(Calendar.YEAR);
-
-                        ToDateClass toDateClass = new ToDateClass(to_dayOfMonth, to_monthOfYear, to_year);
-                        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
-                        if (fromToDateDatabase.readToDateTable().length == 0){
-                            fromToDateDatabase.insertToDateTable(toDateClass);
-                        }else{
-                            fromToDateDatabase.updateToDateTable(toDateClass);
-                        }
-
-                        toDate = to_dayOfMonth + "/" + (to_monthOfYear+1) + "/" + to_year;
-                        toDateButton.setText(toDate);
-
-                    }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-
-                datePickerDialog.show();
-            }
-        });
-
+        calendar = Calendar.getInstance();
         fromTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,6 +266,51 @@ public class AlarmActivity extends Activity {
             }
         });
 
+    }
+
+    private void initializeToDateButton(){
+
+        calendar = Calendar.getInstance();
+        toDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                datePickerDialog = new DatePickerDialog(AlarmActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                        Calendar toDateCalendar = Calendar.getInstance();
+                        toDateCalendar.set(Calendar.YEAR, year);
+                        toDateCalendar.set(Calendar.MONTH, monthOfYear);
+                        toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        to_dayOfMonth = toDateCalendar.get(Calendar.DAY_OF_MONTH);
+                        to_monthOfYear = toDateCalendar.get(Calendar.MONTH);
+                        to_year = toDateCalendar.get(Calendar.YEAR);
+
+                        ToDateClass toDateClass = new ToDateClass(to_dayOfMonth, to_monthOfYear, to_year);
+                        FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
+                        if (fromToDateDatabase.readToDateTable().length == 0) {
+                            fromToDateDatabase.insertToDateTable(toDateClass);
+                        } else {
+                            fromToDateDatabase.updateToDateTable(toDateClass);
+                        }
+
+                        toDate = to_dayOfMonth + "/" + (to_monthOfYear + 1) + "/" + to_year;
+                        toDateButton.setText(toDate);
+
+                    }
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+
+                datePickerDialog.show();
+            }
+        });
+
+    }
+
+    private void initializeToTimeButton(){
+
+        calendar = Calendar.getInstance();
         toTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -272,15 +322,14 @@ public class AlarmActivity extends Activity {
                         Calendar toTimeCalendar = Calendar.getInstance();
                         toTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         toTimeCalendar.set(Calendar.MINUTE, minute);
-                        
+
                         to_hourOfDay = toTimeCalendar.get(Calendar.HOUR_OF_DAY);
                         to_minute = toTimeCalendar.get(Calendar.MINUTE);
 
                         String am_pm = new String();
-                        if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.PM){
+                        if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.PM) {
                             am_pm = "PM";
-                        }
-                        else if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.AM){
+                        } else if (toTimeCalendar.get(Calendar.AM_PM) == Calendar.AM) {
                             am_pm = "AM";
                         }
 
@@ -288,16 +337,16 @@ public class AlarmActivity extends Activity {
                         ToTimeClass toTimeClass = new ToTimeClass(to_hourOfDay, to_minute);
                         TimeAmPmClass timeAmPmClass = new TimeAmPmClass(am_pm);
 
-                        if (fromToDateDatabase.readToTimeTable().length == 0 && fromToDateDatabase.readToTimeAmPmTable().length == 0){
+                        if (fromToDateDatabase.readToTimeTable().length == 0 && fromToDateDatabase.readToTimeAmPmTable().length == 0) {
                             fromToDateDatabase.insertToTimeTable(toTimeClass);
                             fromToDateDatabase.insertToTimeAmPmTable(timeAmPmClass);
-                        }else{
+                        } else {
                             fromToDateDatabase.updateToTimeTable(toTimeClass);
                             fromToDateDatabase.updateToTimeAmPmTable(timeAmPmClass);
                         }
 
-                        String hourString = (toTimeCalendar.get(Calendar.HOUR) == 0)?"12":toTimeCalendar.get(Calendar.HOUR) + "";
-                        String minuteString = (to_minute < 10)?"0" + to_minute:to_minute + "";
+                        String hourString = (toTimeCalendar.get(Calendar.HOUR) == 0) ? "12" : toTimeCalendar.get(Calendar.HOUR) + "";
+                        String minuteString = (to_minute < 10) ? "0" + to_minute : to_minute + "";
                         toTime = hourString + ":" + minuteString + " " + am_pm;
                         toTimeButton.setText(toTime);
 
@@ -310,22 +359,7 @@ public class AlarmActivity extends Activity {
 
     }
 
-    private void prepareData(){
 
-        prepareScheduleAlarmSwitchState();
-        prepareNonScheduleAlarmSwitchState();
-        prepareFromDate();
-        prepareFromTime();
-        prepareToDate();
-        prepareToTime();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        prepareData();
-    }
 
     private void prepareScheduleAlarmSwitchState(){
 
