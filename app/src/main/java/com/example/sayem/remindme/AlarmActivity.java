@@ -81,12 +81,32 @@ public class AlarmActivity extends Activity {
         alarmOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                boolean alarmState = false;
+                AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+
                 if (isChecked) {
-//                        alarmOnOffTextView.setText("Alarm On");
-                    Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-                    startActivity(intent);
+                    alarmState = true;
+                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
+                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0){
+                        alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
+                    }else {
+                        alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
+                    }
+
+                    /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+                    startActivity(intent);*/
                 } else {
-//                        alarmOnOffTextView.setText("Alarm Off");
+
+                    alarmState = false;
+                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
+
+                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0){
+                        alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
+                    }else {
+                        alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
+
+                    }
                 }
             }
         });
@@ -94,11 +114,31 @@ public class AlarmActivity extends Activity {
         scheduleOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                boolean alarmState = false;
+                AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+
                 if (isChecked) {
-//                        alarmOnOffTextView.setText("Alarm On");
+
+                    alarmState = true;
+                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
+                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0){
+                        alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
+                    }else {
+                        alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
+                    }
 
                 } else {
-//                        alarmOnOffTextView.setText("Alarm Off");
+
+                    alarmState = false;
+                    AlarmStateClass alarmStateClass = new AlarmStateClass( alarmState?1:0 );
+
+                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0){
+                        alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
+                    }else {
+                        alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
+                    }
+
                 }
             }
         });
@@ -272,28 +312,12 @@ public class AlarmActivity extends Activity {
 
     private void prepareData(){
 
+        prepareScheduleAlarmSwitchState();
+        prepareNonScheduleAlarmSwitchState();
         prepareFromDate();
         prepareFromTime();
         prepareToDate();
         prepareToTime();
-
-        if (alarmOnOffSwitch.isChecked()){
-//                alarmOnOffTextView.setText("Alarm On");
-            Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-            startActivity(intent);
-        }
-        else{
-//                alarmOnOffTextView.setText("Alarm Off");
-        }
-
-
-        if (scheduleOnOffSwitch.isChecked()){
-//                alarmOnOffTextView.setText("Alarm On");
-
-        }
-        else{
-//                alarmOnOffTextView.setText("Alarm Off");
-        }
 
     }
 
@@ -301,6 +325,44 @@ public class AlarmActivity extends Activity {
     protected void onResume() {
         super.onResume();
         prepareData();
+    }
+
+    private void prepareScheduleAlarmSwitchState(){
+
+        AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+        int alarmState[] = alarmStateDatabase.readScheduleAlarmTable();
+        int alarmStateTemp = 0;
+        for (int i = 0; i < alarmState.length; i++){
+            alarmStateTemp = alarmState[i];
+        }
+        alarmOnOffSwitch.setChecked((alarmStateTemp == 1) ? true : false);
+
+        if (alarmOnOffSwitch.isChecked()){
+            /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+            startActivity(intent);*/
+        }
+        else{
+        }
+
+    }
+
+    private void prepareNonScheduleAlarmSwitchState(){
+
+        AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+        int alarmState[] = alarmStateDatabase.readNonScheduleAlarmTable();
+        int alarmStateTemp = 0;
+        for (int i = 0; i < alarmState.length; i++){
+            alarmStateTemp = alarmState[i];
+        }
+        scheduleOnOffSwitch.setChecked( (alarmStateTemp == 1)?true:false );
+
+        if (scheduleOnOffSwitch.isChecked()){
+            /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+            startActivity(intent);*/
+        }
+        else{
+        }
+
     }
 
     private void prepareFromDate(){

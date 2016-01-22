@@ -84,6 +84,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
             + TO_TIME_AM_PM + " TEXT" +
             ");";
 
+
     public FromToDateDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -97,6 +98,7 @@ public class FromToDateDatabase extends SQLiteOpenHelper {
         db.execSQL(CREATE_TO_TIME_TABLE);
         db.execSQL(CREATE_FROM_TIME_AM_PM_TABLE);
         db.execSQL(CREATE_TO_TIME_AM_PM_TABLE);
+
     }
 
     @Override
