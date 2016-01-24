@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -64,6 +68,7 @@ public class AlarmActivity extends Activity {
         prepareFromTime();
         prepareToDate();
         prepareToTime();
+        prepareAlarmTone();
 
     }
 
@@ -93,7 +98,7 @@ public class AlarmActivity extends Activity {
         scheduleBasedAlarmTextView.setText("Schedule based alarm");
         fromTextView.setText("From");
         toTextView.setText("To");
-        setAlarmToneTextView.setText("Set alarm tone");
+        //setAlarmToneTextView.setText("Set alarm tone");
 
         initializeAlarmOnOffSwitch();
         initializeScheduleOnOffSwitch();
@@ -479,14 +484,58 @@ public class AlarmActivity extends Activity {
         toTimeButton.setText(toTime);
     }
 
+    private void prepareAlarmTone(){
+        AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+        String[] alarmToneUri = new String[]{};
+        alarmToneUri = alarmStateDatabase.readAlarmToneTable();
+        String alarmToneNameTemp = new String();
+        for (int i = 0; i < alarmToneUri.length; i++){
+            alarmToneNameTemp = alarmToneUri[i];
+        }
+
+        Uri uri = Uri.parse(alarmToneNameTemp);
+        final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+        String alarmToneName = ringtone.getTitle(getApplicationContext());
+        setAlarmToneTextView.setText(Html.fromHtml("<medium>" + "Set alarm tone" + "</medium>" + "<br />"
+                                    + "<small>" + alarmToneName + "</small>"));
+    }
+
     private void initializeAlarmToneTextView(){
         setAlarmToneTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Toast.makeText(getApplicationContext(), "Clicked!!", Toast.LENGTH_SHORT).show();
+                final Intent ringtone = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
+                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+                ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+                startActivityForResult(ringtone, 0);
             }
         });
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 && resultCode == RESULT_OK){
+            final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+            String alarmToneName = ringtone.getTitle(getApplicationContext());
+
+            AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+            String alarmToneUri = uri.toString();
+            AlarmToneClass alarmToneClass = new AlarmToneClass(alarmToneUri);
+            if (alarmStateDatabase.readAlarmToneTable().length == 0){
+                alarmStateDatabase.insertAlarmToneTable(alarmToneClass);
+            }else {
+                alarmStateDatabase.updateAlarmToneTable(alarmToneClass);
+            }
+            setAlarmToneTextView.setText(Html.fromHtml("<medium>" + "Set alarm tone" + "</medium>" + "<br />"
+                    + "<small>" + alarmToneName + "</small>"));
+        }
+
+    }
 }
