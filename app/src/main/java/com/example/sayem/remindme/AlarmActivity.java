@@ -395,7 +395,7 @@ public class AlarmActivity extends Activity {
         for (int i = 0; i < alarmState.length; i++){
             alarmStateTemp = alarmState[i];
         }
-        scheduleOnOffSwitch.setChecked( (alarmStateTemp == 1)?true:false );
+        scheduleOnOffSwitch.setChecked((alarmStateTemp == 1) ? true : false);
 
         if (scheduleOnOffSwitch.isChecked()){
             /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
@@ -493,11 +493,16 @@ public class AlarmActivity extends Activity {
             alarmToneNameTemp = alarmToneUri[i];
         }
 
-        Uri uri = Uri.parse(alarmToneNameTemp);
-        final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
-        String alarmToneName = ringtone.getTitle(getApplicationContext());
-        setAlarmToneTextView.setText(Html.fromHtml("<medium>" + "Set alarm tone" + "</medium>" + "<br />"
-                                    + "<small>" + alarmToneName + "</small>"));
+        if (alarmToneUri.length > 0) {
+            Uri uri = Uri.parse(alarmToneNameTemp);
+            Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+            String alarmToneName = ringtone.getTitle(getApplicationContext());
+            setAlarmToneTextView.setText(Html.fromHtml("<medium>" + "Set alarm tone" + "</medium>" + "<br />"
+                    + "<small>" + alarmToneName + "</small>"));
+        } else{
+            setAlarmToneTextView.setText(Html.fromHtml("<medium>" + "Set alarm tone" + "</medium>"));
+        }
+
     }
 
     private void initializeAlarmToneTextView(){
@@ -520,8 +525,8 @@ public class AlarmActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == RESULT_OK){
-            final Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
-            final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+            Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+            Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
             String alarmToneName = ringtone.getTitle(getApplicationContext());
 
             AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
