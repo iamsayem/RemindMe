@@ -227,7 +227,7 @@ public class CategoryList extends Activity {
 
                 //ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
                 //int groupPos = ExpandableListView.getPackedPositionGroup(info.packedPosition);
-                String groupName = categoryListAdapter.getGroupText(groupPosition);
+                final String groupName = categoryListAdapter.getGroupText(groupPosition);
 
 
                 switch (item.getItemId()) {
@@ -242,11 +242,30 @@ public class CategoryList extends Activity {
                         break;
                     case R.id.deleteMenu:
 
-                        ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
-                        itemListDatabase.deleteTable(groupName);
-                        categoryListAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
-                        onRestart();
+                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(CategoryList.this);
+                        alertDialog.setTitle("Attention!!");
+                        alertDialog.setMessage("Are you sure want to delete?");
+                        alertDialog.setIcon(R.drawable.ic_error_black_24dp);
+                        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
+                                itemListDatabase.deleteTable(groupName);
+                                categoryListAdapter.notifyDataSetChanged();
+                                Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
+                                onRestart();
+                            }
+                        });
+                        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                dialog.cancel();
+                            }
+                        });
+                        alertDialog.create();
+                        alertDialog.show();
                         break;
                 }
                 return true;
