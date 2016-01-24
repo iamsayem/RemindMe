@@ -505,7 +505,6 @@ public class AlarmActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(getApplicationContext(), "Clicked!!", Toast.LENGTH_SHORT).show();
                 final Intent ringtone = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
                 ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM);
                 ringtone.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
