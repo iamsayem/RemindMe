@@ -12,6 +12,7 @@ import android.widget.DatePicker;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 
 import java.util.Calendar;
@@ -100,6 +101,7 @@ public class AlarmActivity extends Activity {
         initializeFromTimeButton();
         initializeToDateButton();
         initializeToTimeButton();
+        initializeAlarmToneTextView();
 
     }
 
@@ -121,8 +123,8 @@ public class AlarmActivity extends Activity {
                         alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
                     }
 
-                    /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-                    startActivity(intent);*/
+                    Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+                    startActivity(intent);
                 } else {
 
                     alarmState = false;
@@ -190,7 +192,7 @@ public class AlarmActivity extends Activity {
                         Calendar fromDateCalendar = Calendar.getInstance();
                         fromDateCalendar.set(Calendar.YEAR, year);
                         fromDateCalendar.set(Calendar.MONTH, monthOfYear);
-                        fromDateCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        fromDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
                         from_dayOfMonth = fromDateCalendar.get(Calendar.DAY_OF_MONTH);
                         from_monthOfYear = fromDateCalendar.get(Calendar.MONTH);
@@ -198,13 +200,13 @@ public class AlarmActivity extends Activity {
 
                         FromDateClass fromDateClass = new FromDateClass(from_dayOfMonth, from_monthOfYear, from_year);
                         FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());
-                        if (fromToDateDatabase.readFromDateTable().length == 0){
+                        if (fromToDateDatabase.readFromDateTable().length == 0) {
                             fromToDateDatabase.insertFromDateTable(fromDateClass);
-                        }else{
+                        } else {
                             fromToDateDatabase.updateFromDateTable(fromDateClass);
                         }
 
-                        fromDate = from_dayOfMonth + "/" + (from_monthOfYear+1) + "/" + from_year;
+                        fromDate = from_dayOfMonth + "/" + (from_monthOfYear + 1) + "/" + from_year;
                         fromDateButton.setText(fromDate);
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -475,6 +477,16 @@ public class AlarmActivity extends Activity {
         String minuteString = (dataToTimeTemp[1] < 10)?"0" + dataToTimeTemp[1]:dataToTimeTemp[1] + "";
         toTime = hourString + ":" + minuteString + " " + temp + "";
         toTimeButton.setText(toTime);
+    }
+
+    private void initializeAlarmToneTextView(){
+        setAlarmToneTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(getApplicationContext(), "Clicked!!", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

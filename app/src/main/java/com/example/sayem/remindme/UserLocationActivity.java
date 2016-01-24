@@ -8,15 +8,26 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class UserLocationActivity extends Activity {
+
+    private TextView textLatitude;
+    private TextView textLongitude;
+    private TextView textAccuracy;
+    private TextView textProvider;
 
     private LocationManager locationManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_location);
         locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+        textLatitude = (TextView) findViewById(R.id.textLatitude);
+        textLongitude = (TextView) findViewById(R.id.textLongitude);
+        textAccuracy = (TextView) findViewById(R.id.textAccuracy);
+        textProvider = (TextView) findViewById(R.id.textProvider);
     }
 
     @Override
@@ -102,11 +113,15 @@ public class UserLocationActivity extends Activity {
         double longitude = userCurrentLocation.getLongitude();
         float accuracy = userCurrentLocation.getAccuracy();
         String provider = userCurrentLocation.getProvider();
-        String text = "Latitude: " + latitude + "\n" +
+        /*String text = "Latitude: " + latitude + "\n" +
                         "Longitude: " + longitude + "\n" +
                         "Accuracy: " + accuracy + "\n" +
                         "Provider: " + provider;
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();*/
+        textLatitude.setText("Latitude: " + latitude);
+        textLongitude.setText("Longitude: " + longitude);
+        textAccuracy.setText("Accuracy: " + accuracy);
+        textProvider.setText("Provider: " + provider);
     }
 
     private Location getBetterLocation(Location gpsLocation, Location networkLocation) {
