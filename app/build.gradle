@@ -8,6 +8,7 @@ android {
         applicationId "com.example.sayem.remindme"
         minSdkVersion 15
         targetSdkVersion 23
+        multiDexEnabled true // aita korar fole thik hoyechilo
         versionCode 1
         versionName "1.0"
     }

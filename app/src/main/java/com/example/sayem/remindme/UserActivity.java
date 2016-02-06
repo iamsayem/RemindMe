@@ -18,10 +18,8 @@ public class UserActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        iconView = (ImageView) findViewById(R.id.iconView);
-        appNameTextView = (TextView) findViewById(R.id.appNameTextView);
-        guestUserButton = (Button) findViewById(R.id.guestUserButton);
-        registeredUserButton = (Button) findViewById(R.id.registeredUserButton);
+        initializeAll();
+
         registeredUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,6 +36,17 @@ public class UserActivity extends Activity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void initializeAll(){
+        iconView = (ImageView) findViewById(R.id.iconView);
+        appNameTextView = (TextView) findViewById(R.id.appNameTextView);
+        guestUserButton = (Button) findViewById(R.id.guestUserButton);
+        registeredUserButton = (Button) findViewById(R.id.registeredUserButton);
+
+        appNameTextView.setText("Remind Me");
+        guestUserButton.setText("Guest User");
+        registeredUserButton.setText("Registered User");
     }
 
 }

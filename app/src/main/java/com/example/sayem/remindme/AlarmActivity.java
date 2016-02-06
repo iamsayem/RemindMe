@@ -26,7 +26,7 @@ public class AlarmActivity extends Activity {
 
     TextView setTheAlarmTextView;
     TextView scheduleBasedAlarmTextView;
-    Switch alarmOnOffSwitch;
+    Switch nonScheduleOnOffSwitch;
     Switch scheduleOnOffSwitch;
     TextView fromTextView;
     Button fromDateButton;
@@ -62,8 +62,8 @@ public class AlarmActivity extends Activity {
 
     private void prepareData(){
 
-        prepareScheduleAlarmSwitchState();
         prepareNonScheduleAlarmSwitchState();
+        prepareScheduleAlarmSwitchState();
         prepareFromDate();
         prepareFromTime();
         prepareToDate();
@@ -84,7 +84,7 @@ public class AlarmActivity extends Activity {
 
         setTheAlarmTextView = (TextView) findViewById(R.id.setTheAlarmTextView);
         scheduleBasedAlarmTextView = (TextView) findViewById(R.id.scheduleBasedAlarmTextView);
-        alarmOnOffSwitch = (Switch) findViewById(R.id.alarmOnOffSwitch);
+        nonScheduleOnOffSwitch = (Switch) findViewById(R.id.nonScheduleOnOffSwitch);
         scheduleOnOffSwitch = (Switch) findViewById(R.id.scheduleOnOffSwitch);
         fromTextView = (TextView) findViewById(R.id.fromTextView);
         fromDateButton = (Button) findViewById(R.id.fromDateButton);
@@ -100,7 +100,7 @@ public class AlarmActivity extends Activity {
         toTextView.setText("To");
         //setAlarmToneTextView.setText("Set alarm tone");
 
-        initializeAlarmOnOffSwitch();
+        initializeNonScheduleOnOffSwitch();
         initializeScheduleOnOffSwitch();
         initializeFromDateButton();
         initializeFromTimeButton();
@@ -110,9 +110,9 @@ public class AlarmActivity extends Activity {
 
     }
 
-    private void initializeAlarmOnOffSwitch(){
+    private void initializeNonScheduleOnOffSwitch(){
 
-        alarmOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        nonScheduleOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
@@ -120,25 +120,29 @@ public class AlarmActivity extends Activity {
                 AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
 
                 if (isChecked) {
+                    scheduleOnOffSwitch.setEnabled(false);
+                    nonScheduleOnOffSwitch.setEnabled(true);
                     alarmState = true;
                     AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
-                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0) {
-                        alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
+                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0) {
+                        alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
                     } else {
-                        alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
+                        alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
                     }
 
-                    Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-                    startActivity(intent);
-                } else {
+                    /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+                    startActivity(intent);*/
 
+                } else {
+                    scheduleOnOffSwitch.setEnabled(true);
+                    nonScheduleOnOffSwitch.setEnabled(true);
                     alarmState = false;
                     AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
 
-                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0) {
-                        alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
+                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0) {
+                        alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
                     } else {
-                        alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
+                        alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
 
                     }
                 }
@@ -157,24 +161,26 @@ public class AlarmActivity extends Activity {
                 AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
 
                 if (isChecked) {
-
+                    nonScheduleOnOffSwitch.setEnabled(false);
+                    scheduleOnOffSwitch.setEnabled(true);
                     alarmState = true;
                     AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
-                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0) {
-                        alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
+                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0) {
+                        alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
                     } else {
-                        alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
+                        alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
                     }
 
                 } else {
-
+                    nonScheduleOnOffSwitch.setEnabled(true);
+                    scheduleOnOffSwitch.setEnabled(true);
                     alarmState = false;
                     AlarmStateClass alarmStateClass = new AlarmStateClass(alarmState ? 1 : 0);
 
-                    if (alarmStateDatabase.readNonScheduleAlarmTable().length == 0) {
-                        alarmStateDatabase.insertNonScheduleAlarmTable(alarmStateClass);
+                    if (alarmStateDatabase.readScheduleAlarmTable().length == 0) {
+                        alarmStateDatabase.insertScheduleAlarmTable(alarmStateClass);
                     } else {
-                        alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
+                        alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
                     }
 
                 }
@@ -367,6 +373,27 @@ public class AlarmActivity extends Activity {
     }
 
 
+    private void prepareNonScheduleAlarmSwitchState(){
+
+        AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
+        int alarmState[] = alarmStateDatabase.readNonScheduleAlarmTable();
+        int alarmStateTemp = 0;
+        for (int i = 0; i < alarmState.length; i++){
+            alarmStateTemp = alarmState[i];
+        }
+        nonScheduleOnOffSwitch.setChecked((alarmStateTemp == 1) ? true : false);
+
+        if (nonScheduleOnOffSwitch.isChecked()){
+            /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
+            startActivity(intent);*/
+            scheduleOnOffSwitch.setEnabled(false);
+        }
+        else {
+
+        }
+
+    }
+
 
     private void prepareScheduleAlarmSwitchState(){
 
@@ -376,35 +403,19 @@ public class AlarmActivity extends Activity {
         for (int i = 0; i < alarmState.length; i++){
             alarmStateTemp = alarmState[i];
         }
-        alarmOnOffSwitch.setChecked((alarmStateTemp == 1) ? true : false);
-
-        if (alarmOnOffSwitch.isChecked()){
-            /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-            startActivity(intent);*/
-        }
-        else{
-        }
-
-    }
-
-    private void prepareNonScheduleAlarmSwitchState(){
-
-        AlarmStateDatabase alarmStateDatabase = new AlarmStateDatabase(getApplicationContext());
-        int alarmState[] = alarmStateDatabase.readNonScheduleAlarmTable();
-        int alarmStateTemp = 0;
-        for (int i = 0; i < alarmState.length; i++){
-            alarmStateTemp = alarmState[i];
-        }
         scheduleOnOffSwitch.setChecked((alarmStateTemp == 1) ? true : false);
 
         if (scheduleOnOffSwitch.isChecked()){
             /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
             startActivity(intent);*/
+            nonScheduleOnOffSwitch.setEnabled(false);
         }
         else{
+
         }
 
     }
+
 
     private void prepareFromDate(){
         FromToDateDatabase fromToDateDatabase = new FromToDateDatabase(getApplicationContext());

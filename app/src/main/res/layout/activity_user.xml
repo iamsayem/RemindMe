@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_gravity="center"
-            android:text="Remind Me"
             android:textColor="#ffffff"
             android:id="@+id/appNameTextView"
             android:focusable="false" />
@@ -33,7 +32,6 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Guest User"
             android:gravity="center"
             android:layout_gravity="center"
             android:paddingLeft="30dp"
@@ -50,7 +48,6 @@
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:textColor="#ffffff"
-            android:text="Registered User"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:background="@drawable/registered_user_button_custom" />

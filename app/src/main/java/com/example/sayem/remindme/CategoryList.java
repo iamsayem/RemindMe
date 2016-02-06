@@ -2,9 +2,11 @@ package com.example.sayem.remindme;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -25,11 +27,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 
 public class CategoryList extends Activity {
 
     private ExpandableListView categoryListView;
     private CategoryListAdapter categoryListAdapter;
+    private ProgressDialog progressDialog;
     static List<String> listDataHeader;
     static HashMap<String, List<String> > listDataChild;
     static int group_size, child_size;
@@ -47,6 +52,14 @@ public class CategoryList extends Activity {
         super.onRestart();
         finish();
         startActivityForResult(getIntent(), 2);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog != null && progressDialog.isShowing()){
+            progressDialog.cancel();
+        }
     }
 
     @Override
@@ -123,9 +136,36 @@ public class CategoryList extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                        /*progressDialog = new ProgressDialog(CategoryList.this);
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setCancelable(false);
+                        progressDialog.setMessage("Deleting all data...");
+                        progressDialog.show();*/
+
+                        new ProgressDialogClass().execute(null, null, null);
+
                         ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
                         itemListDatabase.deleteAll();
                         categoryListAdapter.notifyDataSetChanged();
+                        /*new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                try {
+                                    sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+
+                                    }
+                                });
+
+                            }
+                        }).start();*/
                         Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
                         onRestart();
                     }
@@ -192,10 +232,37 @@ public class CategoryList extends Activity {
                     return false;
                 }*/
             case 1:
+
+                /*progressDialog = new ProgressDialog(CategoryList.this);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Deleting " + itemName + "...");
+                progressDialog.show();*/
+                new ProgressDialogClass().execute(null, null, null);
                 ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
                 //itemListDatabase.deleteTable(groupName);
                 itemListDatabase.deleteRow(groupName, itemName);
                 categoryListAdapter.notifyDataSetChanged();
+
+                /*new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.dismiss();
+                            }
+                        });
+                    }
+                }).start();*/
+
                 Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
                 onRestart();
                 return true;
@@ -250,9 +317,37 @@ public class CategoryList extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
+                                /*progressDialog = new ProgressDialog(CategoryList.this);
+                                progressDialog.setIndeterminate(true);
+                                progressDialog.setCancelable(false);
+                                progressDialog.setMessage("Deleting " + groupName + "...");
+                                progressDialog.show();*/
+                                new ProgressDialogClass().execute(null, null, null);
+
                                 ItemListDatabase itemListDatabase = new ItemListDatabase(CategoryList.this);
                                 itemListDatabase.deleteTable(groupName);
                                 categoryListAdapter.notifyDataSetChanged();
+
+                                /*new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        try {
+                                            sleep(2000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.dismiss();
+                                            }
+                                        });
+                                    }
+                                }).start();*/
+
+
                                 Toast.makeText(getApplicationContext(), "Delete Successful!!", Toast.LENGTH_SHORT).show();
                                 onRestart();
                             }
@@ -543,6 +638,50 @@ public class CategoryList extends Activity {
             return this._listDataChild.get(this._listDataHeader.get(groupPosition)).get(childPosition);
         }
 
+    }
+
+    class ProgressDialogClass extends AsyncTask<Object, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (progressDialog == null){
+                progressDialog = new ProgressDialog(CategoryList.this);
+                progressDialog.setMessage("Deleting...");
+                progressDialog.show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(Object... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progressDialog.isShowing()){
+                                progressDialog.dismiss();
+                                progressDialog = null;
+                            }
+                        }
+                    });
+                }
+            }).start();
+        }
     }
 
 }
