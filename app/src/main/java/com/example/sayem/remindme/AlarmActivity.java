@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.location.Location;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -52,6 +53,10 @@ public class AlarmActivity extends Activity {
     int to_minute;
     int from_hourOfDay;
     int from_minute;
+
+    CurrentLocation userCurrentLocation;
+    Location location = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +115,17 @@ public class AlarmActivity extends Activity {
 
     }
 
+    private void startCurrentLocationService(){
+        Intent startIntent = new Intent(getApplicationContext(), CurrentLocation.class);
+        //startIntent.putExtra("whichCategory", whichCategory);
+        getApplicationContext().startService(startIntent);
+    }
+
+    private void stopCurrentLocationService(){
+        Intent stopIntent = new Intent(getApplicationContext(), CurrentLocation.class);
+        getApplicationContext().stopService(stopIntent);
+    }
+
     private void initializeNonScheduleOnOffSwitch(){
 
         nonScheduleOnOffSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -130,8 +146,52 @@ public class AlarmActivity extends Activity {
                         alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
                     }
 
-                    /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
-                    startActivity(intent);*/
+                    ItemListDatabase itemListDatabase = new ItemListDatabase(getApplicationContext());
+                    String[] pharmacy = new String[]{};
+                    pharmacy = itemListDatabase.readData("Pharmacy");
+                    String[] super_shop = new String[]{};
+                    super_shop = itemListDatabase.readData("Super Shop");
+                    String[] stationery_shop = new String[]{};
+                    stationery_shop = itemListDatabase.readData("Stationery Shop");
+                    String[] market = new String[]{};
+                    market = itemListDatabase.readData("Market");
+                    String[] hotel = new String[]{};
+                    hotel = itemListDatabase.readData("Hotel");
+                    String[] hardware_shop = new String[]{};
+                    hardware_shop = itemListDatabase.readData("Hardware Shop");
+                    String[] computer_accessories_shop = new String[]{};
+                    computer_accessories_shop = itemListDatabase.readData("Computer Accessories Shop");
+                    String[] others = new String[]{};
+                    others = itemListDatabase.readData("Others");
+
+                    /*Boolean[] whichCategory = new Boolean[]{};
+                    whichCategory[0] = pharmacy.length > 0?true:false;
+                    whichCategory[1] = super_shop.length > 0?true:false;
+                    whichCategory[2] = stationery_shop.length > 0?true:false;
+                    whichCategory[3] = market.length > 0?true:false;
+                    whichCategory[4] = hotel.length > 0?true:false;
+                    whichCategory[5] = hardware_shop.length > 0?true:false;
+                    whichCategory[6] = computer_accessories_shop.length > 0?true:false;
+                    whichCategory[7] = others.length > 0?true:false;
+                    if (whichCategory[0]
+                            | whichCategory[1]
+                            | whichCategory[2]
+                            | whichCategory[3]
+                            | whichCategory[4]
+                            | whichCategory[5]
+                            | whichCategory[6]
+                            | whichCategory[7]){
+
+
+                    }*/
+                    startCurrentLocationService();
+                    /*location = userCurrentLocation.lastLocation;
+                    if (distance(location.getLatitude(), location.getLongitude(), location.getLatitude(),location.getLongitude()) < 0.0124274 ){
+                        startRingtonePlayingService();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Distance is too long", Toast.LENGTH_SHORT).show();
+                    }*/
+
 
                 } else {
                     scheduleOnOffSwitch.setEnabled(true);
@@ -145,6 +205,10 @@ public class AlarmActivity extends Activity {
                         alarmStateDatabase.updateNonScheduleAlarmTable(alarmStateClass);
 
                     }
+
+//                    stopRingtonePlayingService();
+                    stopCurrentLocationService();
+
                 }
             }
         });
@@ -171,6 +235,11 @@ public class AlarmActivity extends Activity {
                         alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
                     }
 
+                    startCurrentLocationService();
+                    /*userCurrentLocation = new CurrentLocation();
+                    location = userCurrentLocation.lastLocation;*/
+
+
                 } else {
                     nonScheduleOnOffSwitch.setEnabled(true);
                     scheduleOnOffSwitch.setEnabled(true);
@@ -182,7 +251,9 @@ public class AlarmActivity extends Activity {
                     } else {
                         alarmStateDatabase.updateScheduleAlarmTable(alarmStateClass);
                     }
-
+                    //userCurrentLocation = new CurrentLocation(AlarmActivity.this);
+                    //userCurrentLocation.onDestroy();
+                    stopCurrentLocationService();
                 }
             }
         });
@@ -387,9 +458,18 @@ public class AlarmActivity extends Activity {
             /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
             startActivity(intent);*/
             scheduleOnOffSwitch.setEnabled(false);
+
+            //startCurrentLocationService();
+            /*userCurrentLocation = new CurrentLocation();
+            location = userCurrentLocation.lastLocation;*/
+
         }
         else {
 
+            if ( !scheduleOnOffSwitch.isEnabled() && !nonScheduleOnOffSwitch.isChecked() )
+            stopCurrentLocationService();
+            else if (!scheduleOnOffSwitch.isChecked() && !nonScheduleOnOffSwitch.isChecked())
+                stopCurrentLocationService();
         }
 
     }
@@ -409,9 +489,16 @@ public class AlarmActivity extends Activity {
             /*Intent intent = new Intent(getApplicationContext(), UserLocationActivity.class);
             startActivity(intent);*/
             nonScheduleOnOffSwitch.setEnabled(false);
+
+            //startCurrentLocationService();
+            /*userCurrentLocation = new CurrentLocation();
+            location = userCurrentLocation.lastLocation;*/
         }
         else{
-
+            if (!nonScheduleOnOffSwitch.isEnabled() && !scheduleOnOffSwitch.isChecked())
+            stopCurrentLocationService();
+            else if (!scheduleOnOffSwitch.isChecked() && !nonScheduleOnOffSwitch.isChecked())
+                stopCurrentLocationService();
         }
 
     }
@@ -552,5 +639,24 @@ public class AlarmActivity extends Activity {
                     + "<small>" + alarmToneName + "</small>"));
         }
 
+    }
+
+    /* Calculate the distance between two locations in Miles unit */
+    private double distance(double userLatitude, double userLongitude, double givenLatitude, double givenLongitude){
+        double distance = 0;
+        double earthRadius = 3958.75; // In miles
+
+        double dLatitude = Math.toRadians(userLatitude - givenLatitude);
+        double dLongitude = Math.toRadians(userLongitude - givenLongitude);
+
+        double sinOfdLatitude = Math.sin(dLatitude / 2);
+        double sinOfdLongitude = Math.sin(dLongitude / 2);
+
+        double a = Math.pow(sinOfdLatitude, 2) + Math.pow(sinOfdLongitude, 2)
+                * Math.cos(Math.toDegrees(givenLatitude)) * Math.cos(Math.toRadians(userLatitude));
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        distance = earthRadius * c;
+        return distance; // output distance in Miles unit
     }
 }

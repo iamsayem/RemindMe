@@ -24,6 +24,7 @@ public class ItemListDatabase extends SQLiteOpenHelper{
     private static final String HOTEL_ITEM_NAME = "hotel_item_name";
     private static final String HARDWARE_SHOP_ITEM_NAME = "hardware_shop_item_name";
     private static final String COMPUTER_ACCESSORIES_SHOP_ITEM_NAME = "computer_accessories_shop_item_name";
+    private static final String OTHERS_ITEM_NAME = "others_item_name";
 
     private static final String DATABASE_NAME = "ItemListDatabase";
     private static final int DATABASE_VERSION = 1;
@@ -34,6 +35,7 @@ public class ItemListDatabase extends SQLiteOpenHelper{
     private static final String HOTEL = "Hotel";
     private static final String HARDWARE_SHOP = "Hardware_Shop";
     private static final String COMPUTER_ACCESSORIES_SHOP = "Computer_Accessories_Shop";
+    private static final String OTHERS = "Others";
 
     String CREATE_TABLE_PHARMACY = "CREATE TABLE " + PHARMACY + "("
             + PHARMACY_ITEM_NAME + " TEXT"
@@ -56,6 +58,9 @@ public class ItemListDatabase extends SQLiteOpenHelper{
     String CREATE_TABLE_COMPUTER_ACCESSORIES_SHOP = "CREATE TABLE " + COMPUTER_ACCESSORIES_SHOP + "("
             + COMPUTER_ACCESSORIES_SHOP_ITEM_NAME + " TEXT"
             + ");";
+    String CREATE_TABLE_OTHERS = "CREATE TABLE " + OTHERS + "("
+            + OTHERS_ITEM_NAME + " TEXT"
+            + ");";
 
 
 
@@ -74,6 +79,7 @@ public class ItemListDatabase extends SQLiteOpenHelper{
         db.execSQL(CREATE_TABLE_HOTEL);
         db.execSQL(CREATE_TABLE_HARDWARE_SHOP);
         db.execSQL(CREATE_TABLE_COMPUTER_ACCESSORIES_SHOP);
+        db.execSQL(CREATE_TABLE_OTHERS);
     }
 
     @Override
@@ -86,6 +92,7 @@ public class ItemListDatabase extends SQLiteOpenHelper{
         db.execSQL("DROP TABLE IF EXISTS " + HOTEL);
         db.execSQL("DROP TABLE IF EXISTS " + HARDWARE_SHOP);
         db.execSQL("DROP TABLE IF EXISTS " + COMPUTER_ACCESSORIES_SHOP);
+        db.execSQL("DROP TABLE IF EXISTS " + OTHERS);
 
         onCreate(db);
     }
@@ -159,6 +166,12 @@ public class ItemListDatabase extends SQLiteOpenHelper{
 //            String sql = "insert into " + COMPUTER_ACCESSORIES_SHOP + "(" + COMPUTER_ACCESSORIES_SHOP_ITEM_NAME + ")" + " values" + "('"
 //                    + itemNameClass.getItemName() + "');";
 //            db.execSQL(sql);
+        }
+
+        else if (group_position.equals("Others")){
+            contentValues.put(OTHERS_ITEM_NAME, itemNameClass.getItemName());
+            database = db.insert(OTHERS, null, contentValues);
+            db.close();
         }
         return database;
     }
@@ -281,6 +294,23 @@ public class ItemListDatabase extends SQLiteOpenHelper{
             db.close();
 
         }
+
+        else if (group_position.equals("Others")){
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT * FROM " + OTHERS + ";", null);
+            cursor.moveToFirst();
+            item = new String[cursor.getCount()];
+            if (cursor.moveToFirst()){
+                int i = 0;
+                do {
+                    item[i] = cursor.getString(cursor.getColumnIndex(OTHERS_ITEM_NAME));
+                    i++;
+                }while(cursor.moveToNext());
+            }
+            cursor.close();
+
+            db.close();
+        }
         return item;
     }
 
@@ -313,6 +343,10 @@ public class ItemListDatabase extends SQLiteOpenHelper{
         }
         else if (group_position.equals("Computer Accessories Shop")){
             database = db.delete(COMPUTER_ACCESSORIES_SHOP, null, null);
+            db.close();
+        }
+        else if (group_position.equals("Others")){
+            database = db.delete(OTHERS, null, null);
             db.close();
         }
         return database;
@@ -350,6 +384,10 @@ public class ItemListDatabase extends SQLiteOpenHelper{
             database = db.delete(COMPUTER_ACCESSORIES_SHOP, COMPUTER_ACCESSORIES_SHOP_ITEM_NAME + " = ?", new String[] {itemName});
             db.close();
         }
+        else if (group_position.equals("Others")){
+            database = db.delete(OTHERS, OTHERS_ITEM_NAME + " = ?", new String[]{itemName});
+            db.close();
+        }
         return database;
     }
 
@@ -362,6 +400,7 @@ public class ItemListDatabase extends SQLiteOpenHelper{
         db.delete(HOTEL, null, null);
         db.delete(HARDWARE_SHOP, null, null);
         db.delete(COMPUTER_ACCESSORIES_SHOP, null, null);
+        db.delete(OTHERS, null, null);
         db.close();
     }
 }

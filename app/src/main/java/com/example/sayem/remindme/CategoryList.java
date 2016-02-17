@@ -455,6 +455,12 @@ public class CategoryList extends Activity {
             }
         }
         List<String> others = new ArrayList<String>();
+        if (itemListDatabase.readData("Others").length > 0){
+            String item[] = itemListDatabase.readData("Others");
+            for (int i = 0; i < item.length; i++){
+                others.add(item[i]);
+            }
+        }
 
 
 
@@ -523,6 +529,12 @@ public class CategoryList extends Activity {
         else if (text.equals("Computer Accessories Shop")){
             for (int i = 0; i < item.length; i++){
                 computer_accessories_shop.add(item[i]);
+                categoryListAdapter.notifyDataSetChanged();
+            }
+        }
+        else if (text.equals("Others")){
+            for (int i = 0; i < item.length; i++){
+                others.add(item[i]);
                 categoryListAdapter.notifyDataSetChanged();
             }
         }
@@ -665,7 +677,7 @@ public class CategoryList extends Activity {
                 public void run() {
 
                     try {
-                        sleep(2000);
+                        sleep(3000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

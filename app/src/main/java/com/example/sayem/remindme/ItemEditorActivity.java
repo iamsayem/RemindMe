@@ -61,6 +61,8 @@ public class ItemEditorActivity extends Activity {
                         } else if (group_position.equals("Computer Accessories Shop")) {
                             itemListDatabase.insertData(itemNameClass, group_position);
                             itemEditorEditText.setText("");
+                        } else if (group_position.equals("Others")) {
+                            itemListDatabase.insertData(itemNameClass, group_position);
                         }
                     }catch (SQLiteException e){
                         flag = false;

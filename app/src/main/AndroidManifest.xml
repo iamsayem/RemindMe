@@ -40,6 +40,8 @@
         <activity android:name=".AlarmActivity"
             android:theme="@android:style/Theme.Holo.Light.DarkActionBar" >
         </activity>
+        <service android:name=".CurrentLocation"/>
+        <service android:name=".RingtonePlayingService"/>
     </application>
 
 </manifest>
